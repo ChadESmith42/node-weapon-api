@@ -1,14 +1,18 @@
 const express = require('express');
 const pool = require('../modules/pool');
 const router = express.Router();
+const axios = require('axios');
 
-router.get('/', (req, res) => {
-  console.group('Weapon get');
-  console.info(req.url);
-  const weapon = { name: 'Spoon of Combat', type: "melee", damage: 2, durability: 99, isRepairable: true, maxDurability: 99 };
-  console.info(`Sending response`, weapon);
-  console.groupEnd();
-  return res.send(weapon);
+router.get('/new', async (req, res) => {
+  try {
+    const { data } = await axios.get(
+      'https://my.api.mockaroo.com/weapons.json?key=20ac3840'
+    );
+    res.status(200).send(data);
+  } catch (error) {
+    res.status(500).send('Could not get the weapon. Please try again.');
+  }
+
 });
 
 router.get('/:weaponId', async (req, res) => {
@@ -31,5 +35,7 @@ router.get('/:weaponId', async (req, res) => {
   }
   res.end();
 });
+
+
 
 module.exports = router;
