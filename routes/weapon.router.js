@@ -3,6 +3,19 @@ const pool = require('../modules/pool');
 const router = express.Router();
 const axios = require('axios');
 
+/**
+ * GET '/new'
+ * Endpoint returns a new weapon.
+ *
+ * {
+ *   "weapon_type": "Sword",
+ *   "name": "Fiction",
+ *   "hit_points": 67,
+ *   "durability": 83,
+ *   "is_repairable": false,
+ *   "display_name": "The Sword of Fiction"
+ * }
+ */
 router.get('/new', async (req, res) => {
   try {
     const { data } = await axios.get(
@@ -14,6 +27,17 @@ router.get('/new', async (req, res) => {
   }
 });
 
+/**
+ * GET `/:weaponId`
+ * Endpoint returns a specific weapon by `id`.
+ *
+ * {
+ *   "display_name": "Mace of Shame",
+ *   "hit_points": 99,
+ *   "is_repairable": true,
+ *   "id": 1003
+ * }
+ */
 router.get('/:weaponId', async (req, res) => {
   try {
     const weaponId = req.params.weaponId;
@@ -37,6 +61,20 @@ router.get('/:weaponId', async (req, res) => {
   res.end();
 });
 
+/**
+ * POST `/`
+ * Endpoint saves a weapon. Payload expected as follows:
+ * {
+ *  "weapon_type": "Mace",
+ *  "name": "Honor",
+ *  "hit_points": 147,
+ *  "durability": 99,
+ *  "is_repairable": false,
+ *  "display_name": "Mace of Honor"
+ * }
+ *
+ * Returns the newly created weapon.
+ */
 router.post('/', async (req, res) => {
   try {
     const weapon = req.body;
