@@ -12,7 +12,6 @@ router.get('/new', async (req, res) => {
   } catch (error) {
     res.status(500).send('Could not get the weapon. Please try again.');
   }
-
 });
 
 router.get('/:weaponId', async (req, res) => {
@@ -31,11 +30,29 @@ router.get('/:weaponId', async (req, res) => {
       res.status(404).send(`Weapon not found.`);
     }
   } catch (error) {
-    res.status(500).send(`Could not get your weapon at this time. Please, try again.`);
+    res
+      .status(500)
+      .send(`Could not get your weapon at this time. Please, try again.`);
   }
   res.end();
 });
 
+router.post('/', async (req, res) => {
+  try {
+    const weapon = req.body;
+    const queryString = `
+      WITH newWeapon as (
+        INSERT INTO weapons (weapon_type, name, hit_points, durability, is_repairable, display_name) values ($1, $2, $3, $4, $5, $6)
+        RETURNING *
+      )
+      SELECT * FROM newWeapon;
+    `;
 
+    const dbUpdate = await pool.query(queryString, [weapon.weapon_type, weapon.name, weapon.hit_points, weapon.durability, weapon.is_repairable, weapon.display_name]);
+    res.status(201).send(dbUpdate.rows[0]);
+  } catch (error) {
+    res.status(500).send(`Could not save the weapon. Please try again.`);
+  }
+});
 
 module.exports = router;
