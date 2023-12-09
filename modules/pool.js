@@ -1,33 +1,22 @@
 const pg = require('pg');
-const url = require('url');
+require('dotenv').config();
 
-let config = {};
+const dbHost = process.env.DB_HOST;
+const dbPort = process.env.DB_PORT;
+const dbUser = process.env.DB_USER;
+const dbPassword = process.env.DB_PASSWORD;
+const dbName = process.env.DB_NAME;
 
-if (process.env.DATABASE_URL) {
-  const params = url.parse(process.env.DATABASE_URL);
-  const auth = params.auth.split(':');
+let config = {
+  host: dbHost || 'localhost',
+  port: dbPort || 5432,
+  database: dbName || 'local',
+  username: dbUser || '',
+  password: dbPassword || '',
+  max: 10,
+  idleTimeoutMillis: 30000,
+};
 
-  config = {
-    user: auth[0],
-    password: auth[1],
-    host: params.hostname,
-    port: params.port,
-    database: params.pathname.split('/')[1],
-    ssl: { rejectUnauthorized: false },
-    max: 10,
-    idleTimeoutMillis: 30000,
-  };
-} else {
-  config = {
-    host: 'localhost',
-    port: 5432,
-    database: 'local',
-    max: 10,
-    idleTimeoutMillis: 30000,
-  };
-}
-
-// this creates the pool that will be shared by all other modules
 const pool = new pg.Pool(config);
 
 // the pool with emit an error on behalf of any idle clients

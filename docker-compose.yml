@@ -1,0 +1,28 @@
+version: '3'
+services:
+  node:
+    container_name: node-api
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=weapon-api-admin
+      - DB_PASSWORD=^&*()_+QWERTYUIOP{}|ASDFGHJKL:"ZXCVBNM<>?1234567890
+      - DB_NAME=weapon-api
+    depends_on:
+      - db
+  db:
+    container_name: node-db
+    image: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+
+    environment:
+      - POSTGRES_USER=weapon-api-admin
+      - POSTGRES_PASSWORD=^&*()_+QWERTYUIOP{}|ASDFGHJKL:"ZXCVBNM<>?1234567890
+      - POSTGRES_DB=weapon-api
